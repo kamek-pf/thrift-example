@@ -1,0 +1,9 @@
+[package]
+name = "rs-client"
+version = "0.1.0"
+authors = ["Kamek <b.kamek@gmail.com>"]
+
+[dependencies]
+thrift = "0.0.4"
+ordered-float = "0.5.0"
+try_from = "0.2.2"

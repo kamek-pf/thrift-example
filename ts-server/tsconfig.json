@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noImplicitThis": true,
+        "forceConsistentCasingInFileNames": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "outDir": "./build",
+        "moduleResolution": "node",
+        "module": "commonjs",
+        "target": "es6",
+        "lib": ["es2017", "dom", "esnext"],
+        "baseUrl": "./src",
+        "inlineSources": true,
+        "inlineSourceMap": true
+    },
+    "exclude": ["migrations", "scripts", "node_modules", "__test__", "./gen"]
+}
