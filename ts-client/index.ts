@@ -1,7 +1,7 @@
 import {
     createClient,
     createConnection,
-    TCompactProtocol,
+    TBinaryProtocol,
     TBufferedTransport,
 } from "thrift";
 
@@ -13,19 +13,16 @@ const port = 8045;
 
 const options = {
     transport: TBufferedTransport,
-    protocol: TCompactProtocol,
+    protocol: TBinaryProtocol,
 };
 
 const connection = createConnection(hostName, port, options);
-const thriftClient: FakeThingy.Client = createClient(
-    FakeThingy.Client,
-    connection,
-);
+const thriftClient = createClient(FakeThingy.Client, connection);
 
 // All client methods return a Promise of the expected result.
 thriftClient
     .add(10, 6)
-    .then((result: number) => {
+    .then(result => {
         console.log(`result add : ${result}`);
     })
     .catch(() => {
@@ -34,7 +31,7 @@ thriftClient
 
 thriftClient
     .divide(30, 3)
-    .then((result: number) => {
+    .then(result => {
         console.log(`result divide: ${result}`);
     })
     .catch(() => {

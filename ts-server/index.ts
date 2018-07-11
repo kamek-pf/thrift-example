@@ -1,8 +1,6 @@
-import { createServer, TCompactProtocol, TBufferedTransport } from "thrift";
-
+import { createServer, TBinaryProtocol, TBufferedTransport } from "thrift";
 import { FakeThingy, FakeProfile, InvalidOperation } from "./codegen";
 
-// Create and start the web server
 const port: number = 8045;
 const hostName: string = "0.0.0.0";
 
@@ -12,7 +10,7 @@ const serviceHandler = {
     ping(): void {
         console.log("pong");
     },
-    add(left: number, right: number): number {
+    add(left: number, right: number) {
         return left + right;
     },
     divide(left: number, right: number): number {
@@ -23,10 +21,7 @@ const serviceHandler = {
             });
         }
 
-        const res = left / right;
-        console.log(`${left} / ${right} = ${res}`);
-
-        return res;
+        return left / right;
     },
     // You can implement things synchronously or asynchonously !
     async get_profile(): Promise<FakeProfile> {
@@ -39,14 +34,10 @@ const serviceHandler = {
     },
 };
 
-// The rest is just noise, configuring the transport layer,
-// serialization protocol ...
-
-// ServiceOptions: The I/O stack for the service
+// The rest is boilerplate, configuring the transport layer,
+// serialization protocol, and running the server
 const serviceOptions = {
-    handler: serviceHandler,
-    processor: FakeThingy.Processor,
-    protocol: TCompactProtocol,
+    protocol: TBinaryProtocol,
     transport: TBufferedTransport,
 };
 
