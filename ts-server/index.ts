@@ -1,7 +1,8 @@
-import { createServer, TBinaryProtocol, TBufferedTransport } from "thrift";
+import { createServer, createWebServer, TBinaryProtocol, TBufferedTransport } from "thrift";
 import { FakeThingy, FakeProfile, InvalidOperation } from "./codegen";
 
-const port: number = 8045;
+const httpPort: number = 8080;
+const tcpPort: number = 8085;
 const hostName: string = "0.0.0.0";
 
 // This handler implements the service,
@@ -37,9 +38,23 @@ const serviceHandler = {
 // The rest is boilerplate, configuring the transport layer,
 // serialization protocol, and running the server
 const serviceOptions = {
+    handler: serviceHandler,
+    processor: FakeThingy.Processor,
     protocol: TBinaryProtocol,
     transport: TBufferedTransport,
 };
 
 let server = createServer(FakeThingy, serviceHandler, serviceOptions);
-server.listen(port, hostName);
+server.listen(tcpPort, hostName);
+console.log(`Thrift TCP server listening on port ${tcpPort}`);
+
+const httpServerOptions = {
+    services: {
+        '/': serviceOptions
+    }
+}
+
+createWebServer(httpServerOptions).listen(httpPort, () => {
+    console.log(`Thrift HTTP server listening on port ${httpPort}`)
+});
+

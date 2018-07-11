@@ -1,6 +1,6 @@
 import {
-    createClient,
-    createConnection,
+    createHttpClient,
+    createHttpConnection,
     TBinaryProtocol,
     TBufferedTransport,
 } from "thrift";
@@ -9,31 +9,36 @@ import { FakeThingy } from "./codegen";
 
 // The location of the server endpoint
 const hostName = "0.0.0.0";
-const port = 8045;
+const port = 8080;
 
 const options = {
     transport: TBufferedTransport,
     protocol: TBinaryProtocol,
 };
 
-const connection = createConnection(hostName, port, options);
-const thriftClient = createClient(FakeThingy.Client, connection);
+const connection = createHttpConnection(hostName, port, options);
+const thriftClient = createHttpClient(FakeThingy.Client, connection);
 
 // All client methods return a Promise of the expected result.
-thriftClient
-    .add(10, 6)
-    .then(result => {
-        console.log(`result add : ${result}`);
-    })
-    .catch(() => {
-        console.log("NONONONONO");
-    });
+const sendCalls = async () => {
+    const res = await thriftClient.add(10,6);
+    console.log(res);
 
-thriftClient
-    .divide(30, 3)
-    .then(result => {
-        console.log(`result divide: ${result}`);
+    const res2 = await thriftClient.divide(30,3);
+    console.log(res2);
+}
+
+function sleep(ms: number){
+    return new Promise(resolve=>{
+        setTimeout(resolve,ms)
     })
-    .catch(() => {
-        console.log("NONONONONO");
-    });
+}
+
+const loop = async () => {
+    for (var i = 0; i < 500; ++i) {
+        await sendCalls();
+        await sleep(5000);
+    }
+}
+
+loop();

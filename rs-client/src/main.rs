@@ -28,7 +28,7 @@ fn main() {
 
 fn get_client() -> impl TFakeThingySyncClient {
     // setup tcp connection
-    let addr = "127.0.0.1:8045";
+    let addr = "127.0.0.1:8085";
     let mut channel = TTcpChannel::new();
     channel.open(addr).unwrap();
     let (inc, outc) = channel.split().unwrap();
