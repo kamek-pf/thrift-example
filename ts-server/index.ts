@@ -1,10 +1,10 @@
-import {
-    createWebServer,
-    TCompactProtocol,
-    TBufferedTransport,
-} from 'thrift'
+import { createServer, TCompactProtocol, TBufferedTransport } from "thrift";
 
-import { FakeThingy, FakeProfile, InvalidOperation } from './codegen'
+import { FakeThingy, FakeProfile, InvalidOperation } from "./codegen";
+
+// Create and start the web server
+const port: number = 8045;
+const hostName: string = "0.0.0.0";
 
 // This handler implements the service,
 // that's pretty much all you need to do
@@ -19,11 +19,14 @@ const serviceHandler = {
         if (right === 0) {
             throw new InvalidOperation({
                 code: 500,
-                why: "lol noob"
+                why: "you can't do that :(",
             });
         }
 
-        return left / right;
+        const res = left / right;
+        console.log(`${left} / ${right} = ${res}`);
+
+        return res;
     },
     // You can implement things synchronously or asynchonously !
     async get_profile(): Promise<FakeProfile> {
@@ -31,31 +34,21 @@ const serviceHandler = {
         return new FakeProfile({
             id: 15,
             first_name: "Test",
-            last_name: "Icule"
-        })
-    }
-}
+            last_name: "Icule",
+        });
+    },
+};
 
 // The rest is just noise, configuring the transport layer,
 // serialization protocol ...
 
 // ServiceOptions: The I/O stack for the service
-const myServiceOpts = {
+const serviceOptions = {
     handler: serviceHandler,
-    processor: FakeThingy,
+    processor: FakeThingy.Processor,
     protocol: TCompactProtocol,
-    transport: TBufferedTransport
-}
+    transport: TBufferedTransport,
+};
 
-// ServerOptions: Define server features
-const serverOpt = {
-    services: {
-        '/': myServiceOpts
-    }
-}
-
-// Create and start the web server
-const port: number = 8045;
-createWebServer(serverOpt).listen(port, () => {
-    console.log(`Thrift server listening on port ${port}`)
-})
+let server = createServer(FakeThingy, serviceHandler, serviceOptions);
+server.listen(port, hostName);

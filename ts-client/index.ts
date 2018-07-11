@@ -3,28 +3,40 @@ import {
     createConnection,
     TCompactProtocol,
     TBufferedTransport,
-} from 'thrift'
+} from "thrift";
 
-import { FakeThingy } from './codegen'
+import { FakeThingy } from "./codegen";
 
 // The location of the server endpoint
-const CONFIG = {
-    hostName: '0.0.0.0',
-    port: 8045
-}
+const hostName = "0.0.0.0";
+const port = 8045;
 
 const options = {
     transport: TBufferedTransport,
     protocol: TCompactProtocol,
-}
+};
 
-const connection = createConnection(CONFIG.hostName, CONFIG.port, options)
-const thriftClient: FakeThingy.Client = createClient(FakeThingy.Client, connection)
+const connection = createConnection(hostName, port, options);
+const thriftClient: FakeThingy.Client = createClient(
+    FakeThingy.Client,
+    connection,
+);
 
 // All client methods return a Promise of the expected result.
-thriftClient.add(10, 7).then((result: number) =>{
-    console.log(`result: ${result}`)
-})
-.catch(() => {
-    console.log("NONONONONO");
-})
+thriftClient
+    .add(10, 6)
+    .then((result: number) => {
+        console.log(`result add : ${result}`);
+    })
+    .catch(() => {
+        console.log("NONONONONO");
+    });
+
+thriftClient
+    .divide(30, 3)
+    .then((result: number) => {
+        console.log(`result divide: ${result}`);
+    })
+    .catch(() => {
+        console.log("NONONONONO");
+    });
